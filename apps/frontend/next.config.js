@@ -1,10 +1,27 @@
 // @ts-check
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { withSentryConfig } from '@sentry/nextjs';
+
+const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
     proxyTimeout: 90_000,
+  },
+  // Without this, Turbopack auto-detects the workspace root by walking up
+  // for a lockfile and can land on an unrelated one outside this repo,
+  // causing it to watch/scan far more of the filesystem than necessary.
+  turbopack: {
+    root: path.join(currentDirectory, '../..'),
+  },
+  // Keep dev-compiled pages resident in memory instead of evicting them after
+  // a short idle period, so navigating back to a page you already visited
+  // doesn't trigger a recompile. Only affects `next dev`, no effect on prod.
+  onDemandEntries: {
+    maxInactiveAge: 60 * 60 * 1000,
+    pagesBufferLength: 30,
   },
   // Document-Policy header for browser profiling
   async headers() {

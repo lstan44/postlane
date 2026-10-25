@@ -499,24 +499,13 @@ export const MainBillingComponent: FC<{
   const [loading, setLoading] = useState<boolean>(false);
   // which button started the request, so only that one shows a spinner
   const [clicked, setClicked] = useState('');
-  const [period, setPeriod] = useState<'MONTHLY' | 'YEARLY'>(
-    subscription?.period || 'MONTHLY'
-  );
-  const [monthlyOrYearly, setMonthlyOrYearly] = useState<'on' | 'off'>(
-    period === 'MONTHLY' ? 'off' : 'on'
-  );
+  const period: 'MONTHLY' = 'MONTHLY';
   const [initialChannels, setInitialChannels] = useState(
     sub?.totalChannels || 1
   );
   useEffect(() => {
     if (initialChannels !== sub?.totalChannels) {
       setInitialChannels(sub?.totalChannels || 1);
-    }
-    if (period !== sub?.period) {
-      setPeriod(sub?.period || 'MONTHLY');
-      setMonthlyOrYearly(
-        (sub?.period || 'MONTHLY') === 'MONTHLY' ? 'off' : 'on'
-      );
     }
     setSubscription(sub);
   }, [sub]);
@@ -556,14 +545,8 @@ export const MainBillingComponent: FC<{
     if (!subscription) {
       return 'FREE';
     }
-    if (period === 'YEARLY' && monthlyOrYearly === 'off') {
-      return '';
-    }
-    if (period === 'MONTHLY' && monthlyOrYearly === 'on') {
-      return '';
-    }
     return subscription?.subscriptionTier;
-  }, [subscription, initialChannels, monthlyOrYearly, period]);
+  }, [subscription, initialChannels, period]);
   const moveToCheckout = useCallback(
     (billing: 'STANDARD' | 'PRO' | 'FREE', reactivate = false) =>
       async () => {
@@ -700,7 +683,7 @@ export const MainBillingComponent: FC<{
           await fetch('/billing/subscribe', {
             method: 'POST',
             body: JSON.stringify({
-              period: monthlyOrYearly === 'on' ? 'YEARLY' : 'MONTHLY',
+              period,
               utm,
               billing,
               ...(dub ? { dub } : {}),
@@ -724,9 +707,7 @@ export const MainBillingComponent: FC<{
         if (url) {
           await track(TrackEnum.InitiateCheckout, {
             value:
-              pricing[billing][
-                monthlyOrYearly === 'on' ? 'year_price' : 'month_price'
-              ],
+              pricing[billing].month_price,
             currency: 'USD',
           });
           window.location.href = url;
@@ -751,7 +732,6 @@ export const MainBillingComponent: FC<{
               return;
             }
           }
-          setPeriod(monthlyOrYearly === 'on' ? 'YEARLY' : 'MONTHLY');
           setSubscription((subs) => ({
             ...subs!,
             subscriptionTier: billing,
@@ -771,13 +751,13 @@ export const MainBillingComponent: FC<{
           mutate('/billing/renewal');
           showConfirmedPlan(
             billing,
-            monthlyOrYearly === 'on' ? 'YEARLY' : 'MONTHLY'
+            period
           );
           toast.show('Subscription updated successfully');
         }
         setLoading(false);
       },
-    [monthlyOrYearly, subscription, user, utm, paymentAction]
+    [period, subscription, user, utm, paymentAction]
   );
   if (user?.isLifetime) {
     router.replace('/');
@@ -807,10 +787,10 @@ export const MainBillingComponent: FC<{
       </div>
     );
   }
-  const yearly = monthlyOrYearly === 'on';
-  const tiers = Object.keys(pricing);
+  const yearly = false;
+  const tiers = ['FREE', 'STANDARD', 'PRO'];
   const currentTier = subscription?.subscriptionTier || 'FREE';
-  const plans = tiers.filter((name) => !isGeneral || name !== 'FREE');
+  const plans = isGeneral ? ['STANDARD', 'PRO'] : tiers;
 
   const planAction = (name: string): PlanAction => {
     if (currentPackage === name && subscription?.cancelAt) {
@@ -881,28 +861,8 @@ export const MainBillingComponent: FC<{
             )}
           </div>
         </div>
-        <div className="flex p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] select-none">
-          <div
-            onClick={() => setMonthlyOrYearly('off')}
-            className={clsx(
-              'h-[34px] px-[16px] rounded-[6px] flex items-center justify-center mobile:flex-1',
-              !yearly ? 'bg-boxFocused text-textItemFocused' : 'cursor-pointer'
-            )}
-          >
-            {t('billing_monthly', 'Monthly')}
-          </div>
-          <div
-            onClick={() => setMonthlyOrYearly('on')}
-            className={clsx(
-              'h-[34px] px-[16px] rounded-[6px] flex items-center justify-center gap-[8px] mobile:flex-1',
-              yearly ? 'bg-boxFocused text-textItemFocused' : 'cursor-pointer'
-            )}
-          >
-            {t('billing_yearly', 'Yearly')}
-            <div className="bg-[#AA0FA4] text-white text-[12px] px-[6px] rounded-[4px]">
-              {t('billing_20_percent_off', '20% Off')}
-            </div>
-          </div>
+        <div className="rounded-[8px] border border-newTableBorder px-4 py-2 text-sm font-medium">
+          {t('billing_monthly', 'Monthly billing')}
         </div>
       </div>
       {subscription?.cancelAt && isGeneral && (

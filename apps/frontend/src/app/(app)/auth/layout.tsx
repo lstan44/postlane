@@ -3,10 +3,10 @@ import { getT } from '@gitroom/react/translation/get.translation.service.backend
 export const dynamic = 'force-dynamic';
 import { ReactNode } from 'react';
 import loadDynamic from 'next/dynamic';
-import { TestimonialComponent } from '@gitroom/frontend/components/auth/testimonial.component';
 import { LogoTextComponent } from '@gitroom/frontend/components/ui/logo-text.component';
 import { MantineWrapper } from '@gitroom/react/helpers/mantine.wrapper';
 import { Toaster } from '@gitroom/react/toaster/toaster';
+import Link from 'next/link';
 const ReturnUrlComponent = loadDynamic(() => import('./return.url.component'));
 export default async function AuthLayout({
   children,
@@ -25,16 +25,20 @@ export default async function AuthLayout({
           <div className="w-full max-w-[440px] mx-auto justify-center gap-[20px] h-full flex flex-col text-white">
             <LogoTextComponent />
             <div className="flex">{children}</div>
+            <nav aria-label="Legal pages" className="flex justify-center gap-4 text-xs text-white/60">
+              <Link href="/privacy" className="hover:text-white">Privacy</Link>
+              <Link href="/terms" className="hover:text-white">Terms</Link>
+              <Link href="/data-deletion" className="hover:text-white">Data deletion</Link>
+            </nav>
           </div>
         </div>
         <div className="text-[36px] flex-1 pt-[88px] hidden lg:flex flex-col items-center">
           <div className="text-center">
-            Over <span className="text-[42px] text-[#FC69FF]">20,000+</span>{' '}
-            Entrepreneurs use
-            <br />
-            Postiz To Grow Their Social Presence
+            Plan once. Publish everywhere.
+            <p className="mt-5 text-lg font-normal text-white/65">
+              Keep your channels, drafts, and publishing calendar in one workspace.
+            </p>
           </div>
-          <TestimonialComponent />
         </div>
       </div>
     </MantineWrapper>

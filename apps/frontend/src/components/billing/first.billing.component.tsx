@@ -23,7 +23,6 @@ import {
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 import { useUser } from '@gitroom/frontend/components/layout/user.context';
 import { useDubClickId } from '@gitroom/frontend/components/layout/dubAnalytics';
-import SafeImage from '@gitroom/react/helpers/safe.image';
 import { useModals } from '@gitroom/frontend/components/layout/new-modal';
 import useCookie from 'react-use-cookie';
 import { LogoutComponent } from '@gitroom/frontend/components/layout/logout.component';
@@ -54,7 +53,7 @@ export const FirstBillingComponent = () => {
   const [stripe, setStripe] = useState<null | Promise<Stripe>>(null);
   const [stripeFailed, setStripeFailed] = useState(false);
   const [tier, setTier] = useState('STANDARD');
-  const [period, setPeriod] = useState('MONTHLY');
+  const period = 'MONTHLY';
   const fetch = useFetch();
   const { mutate } = useSWRConfig();
   const modals = useModals();
@@ -88,21 +87,6 @@ export const FirstBillingComponent = () => {
     ).json();
   }, [tier, period]);
 
-  const showYouTube = () => {
-    modals.openModal({
-      title: 'Grow Fast With Postiz (Play the video)',
-      children: (
-        <iframe
-          className="h-full aspect-video min-w-[800px]"
-          src="https://www.youtube.com/embed/BdsCVvEYgHU?si=vvhaZJ8I5oXXvVJS?autoplay=1"
-          title="Postiz Tutorial"
-          allow="autoplay"
-          allowFullScreen
-        />
-      ),
-    });
-  };
-
   const { data, isLoading } = useSWR(
     `/billing-${tier}-${period}`,
     loadCheckout,
@@ -122,7 +106,7 @@ export const FirstBillingComponent = () => {
   }, [data?.blocked, mutate]);
 
   const price = useMemo(
-    () => Object.entries(pricing).filter(([key, value]) => key !== 'FREE'),
+    () => ['STANDARD', 'PRO'].map((key) => [key, pricing[key]] as const),
     []
   );
 
@@ -130,30 +114,7 @@ export const FirstBillingComponent = () => {
     return (
       <>
         <div className="text-[46px] font-[600] leading-[110%] tablet:text-[36px] mobile:!text-[30px] whitespace-pre-line text-balance">
-          {t('billing_join_over', 'Join Over')}{' '}
-          <span className="text-[#FC69FF]">
-            {t('billing_entrepreneurs_count', '20,000+ Entrepreneurs')}
-          </span>{' '}
-          {t('billing_who_use', 'who use')}{' '}
-          {t(
-            'billing_postiz_grow_social',
-            'Postiz To Grow Their Social Presence'
-          )}
-        </div>
-
-        <div className="flex" onClick={showYouTube}>
-          <div className="tablet:mb-[32px] cursor-pointer mt-[32px] flex gap-[10px] items-center underline hover:font-[700]">
-            <div>
-              <SafeImage
-                className="text-[12px]"
-                src="/icons/platforms/youtube.svg"
-                width={22.5}
-                height={16}
-                alt="YouTube"
-              />
-            </div>
-            <div>See the power of Postiz (click here)</div>
-          </div>
+          Schedule once. Publish across your social channels.
         </div>
 
         {!!user?.allowTrial && (
@@ -162,7 +123,7 @@ export const FirstBillingComponent = () => {
               <div>
                 <CheckIconComponent />
               </div>
-              <div>{t('billing_no_risk_trial', '100% No-Risk Free Trial')}</div>
+              <div>{t('billing_no_risk_trial', '7-day free trial')}</div>
             </div>
             <div className="flex-1 flex gap-[8px] justify-center mobile:justify-start">
               <div>
@@ -171,7 +132,7 @@ export const FirstBillingComponent = () => {
               <div>
                 {t(
                   'billing_pay_nothing_7_days',
-                  'Pay NOTHING for the first 7-days'
+                  'Your card is charged after the trial unless you cancel'
                 )}
               </div>
             </div>
@@ -255,32 +216,8 @@ export const FirstBillingComponent = () => {
               <div className="flex-1 text-[24px] font-[700]">
                 {t('billing_choose_plan', 'Choose a Plan')}
               </div>
-              <div className="h-[44px] px-[6px] mobile:px-0 flex items-center justify-center mobile:justify-start gap-[12px] border border-newColColor rounded-[12px] select-none">
-                <div
-                  className={clsx(
-                    'h-[32px] mobile:flex-1 rounded-[6px] text-[16px] px-[12px] flex justify-center items-center',
-                    period === 'MONTHLY'
-                      ? 'bg-boxFocused text-textItemFocused'
-                      : 'cursor-pointer'
-                  )}
-                  onClick={() => setPeriod('MONTHLY')}
-                >
-                  {t('billing_monthly', 'Monthly')}
-                </div>
-                <div
-                  className={clsx(
-                    'gap-[10px] h-[32px] mobile:flex-1 rounded-[6px] text-[16px] px-[12px] flex justify-center items-center',
-                    period === 'YEARLY'
-                      ? 'bg-boxFocused text-textItemFocused'
-                      : 'cursor-pointer'
-                  )}
-                  onClick={() => setPeriod('YEARLY')}
-                >
-                  <div>{t('billing_yearly', 'Yearly')}</div>
-                  <div className="bg-[#AA0FA4] text-[white] px-[8px] rounded-[4px] mobile:hidden">
-                    {t('billing_20_percent_off', '20% Off')}
-                  </div>
-                </div>
+              <div className="h-[44px] px-[12px] flex items-center justify-center border border-newColColor rounded-[12px]">
+                {t('billing_monthly', 'Monthly billing')}
               </div>
             </div>
             <div className="grid grid-cols-2 gap-[8px] mobile:!grid-cols-2 tablet:grid-cols-4">
