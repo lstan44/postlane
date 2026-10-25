@@ -30,10 +30,10 @@ export default function HomePage() {
           <h1 className="max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-7xl">One clear lane from draft to published.</h1>
           <p className="mt-7 max-w-xl text-lg leading-8 text-white/70">Plan content, coordinate channels, and schedule your publishing from one workspace built for teams that move.</p>
           <div className="mt-9 flex flex-wrap gap-4">
-            <Link href="/auth/register" className="rounded-xl bg-cyan-300 px-6 py-3 font-semibold text-slate-950">Start your 7-day trial</Link>
+            <Link href="/auth/login" className="rounded-xl bg-cyan-300 px-6 py-3 font-semibold text-slate-950">Sign in</Link>
             <a href="#pricing" className="rounded-xl border border-white/20 px-6 py-3 font-semibold">See plans</a>
           </div>
-          <p className="mt-4 text-sm text-white/50">Card required. Cancel before the trial ends to avoid a charge.</p>
+          <p className="mt-4 text-sm text-white/50">Paid signup is not open yet. Existing users can sign in.</p>
         </div>
         <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-300/15 to-indigo-400/10 p-8">
           <div className="text-sm text-cyan-200">Your publishing workspace</div>
@@ -48,15 +48,15 @@ export default function HomePage() {
         </div>
       </section>
       <section id="pricing" className="mx-auto max-w-6xl py-16">
-        <div className="mb-10 text-center"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Simple monthly plans</p><h2 className="mt-3 text-4xl font-bold">Room to publish more</h2></div>
+        <div className="mb-10 text-center"><p className="text-sm font-semibold uppercase tracking-[.2em] text-cyan-300">Planned monthly pricing</p><h2 className="mt-3 text-4xl font-bold">Room to publish more</h2><p className="mt-3 text-white/60">Plans will be available after billing and channel integrations are ready.</p></div>
         <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
           {plans.map((plan) => (
             <article key={plan.name} className="rounded-2xl border border-white/15 bg-white/[.04] p-8">
               <h3 className="text-xl font-semibold">{plan.name}</h3>
               <p className="mt-5 text-5xl font-bold">{plan.price}<span className="text-base font-normal text-white/55"> / month</span></p>
               <p className="mt-3 text-white/70">{plan.channels}</p>
-              <p className="mt-2 text-sm text-white/50">7-day trial · card required · cancel anytime</p>
-              <Link href="/auth/register" className="mt-7 block rounded-xl bg-white px-5 py-3 text-center font-semibold text-slate-950">Choose {plan.name}</Link>
+              <p className="mt-2 text-sm text-white/50">Planned: seven-day trial · card required · cancel anytime</p>
+              <Link href="mailto:support@postlane.fyi" className="mt-7 block rounded-xl bg-white px-5 py-3 text-center font-semibold text-slate-950">Get launch updates</Link>
             </article>
           ))}
         </div>

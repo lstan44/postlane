@@ -15,11 +15,11 @@ the AGPL-3.0 terms.
 
 ## Hosted service
 
-Postlane's current hosted plans are monthly: $19 for up to 5 social channels or
-$49 for up to 25 channels. A seven-day trial requires a payment method. Feature
-availability depends on the social platforms, approved API access, and services
-configured for the deployed instance. The service does not claim availability of
-unconfigured AI, analytics, or publishing features.
+Planned hosted plans are monthly: $19 for up to 5 social channels or $49 for up
+to 25 channels, with a seven-day trial requiring a payment method. Paid signup is
+not currently open. Feature availability will depend on social platform approval
+and the services configured for the deployed instance. The service does not
+claim availability of unconfigured AI, analytics, or publishing features.
 
 The public service is deployed from a pinned commit using the companion
 [cloud-infra Ansible configuration](https://github.com/lstan44/cloud-infra) when
