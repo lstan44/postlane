@@ -30,7 +30,6 @@ export class LinkedinPageProvider
     'openid',
     'profile',
     'w_member_social',
-    'r_basicprofile',
     'rw_organization_admin',
     'w_organization_social',
     'r_organization_social',
@@ -124,7 +123,7 @@ export class LinkedinPageProvider
   override async generateAuthUrl() {
     const state = makeSecureId(6);
     const codeVerifier = makeSecureId(30);
-    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&prompt=none&client_id=${
+    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${
       process.env.LINKEDIN_CLIENT_ID
     }&redirect_uri=${encodeURIComponent(
       `${process.env.FRONTEND_URL}/integrations/social/linkedin-page`
